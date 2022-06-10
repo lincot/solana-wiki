@@ -1,0 +1,10 @@
+[book]
+authors = ["lincot"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Solana Wiki"
+
+[output.html]
+git-repository-url = "https://github.com/lincot/solana-wiki"
+edit-url-template = "https://github.com/lincot/solana-wiki/edit/master/{path}"
