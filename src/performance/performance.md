@@ -49,3 +49,31 @@ It may reduce binary size by about 10%, but also degrade performance by about 50
 ## Vec vs array
 
 It is generally recommended to use arrays to store in accounts.
+
+## Zero copy deserialization
+
+Using `#[account(zero_copy)]` and `AccountLoader`
+instead of `#[account]` and `Account`
+makes it so data is not copied to a new struct using borsh
+but instead taken from account's `data` field directly using casting.
+
+This is useful when dealing with large accounts to save stack space.
+
+However, by default `zero_copy` uses `#[repr(C)]`, which increases `data`
+space by itself due to alignment and is likely to break client-side
+deserialization. In essence, it only works when each field has size of
+8*N bytes, for example: 
+
+```rust
+#[account(zero_copy)]
+struct User {
+    pub authority: Pubkey,
+    pub balance: u64,
+    pub name: [u8; 24],
+}
+```
+
+To avoid the `#[repr(C)]` issues, you can use `#[repr(packed)]`
+along with `zero_copy`. However, it may potentially cause UB
+(see [rust-lang#82523](https://github.com/rust-lang/rust/issues/82523)).
+
