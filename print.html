@@ -140,14 +140,14 @@
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
 <p>This is a Solana wiki, containing info and tips on Solana program developement.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="performance-and-transactionsaccount-cost"><a class="header" href="#performance-and-transactionsaccount-cost">Performance and transactions/account cost</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="performance-and-transactionsaccounts-cost"><a class="header" href="#performance-and-transactionsaccounts-cost">Performance and transactions/accounts cost</a></h1>
 <h2 id="metrics"><a class="header" href="#metrics">Metrics</a></h2>
 <p>There are 3 performance metrics of Solana programs:</p>
 <ol>
-<li>Account space.
+<li>Accounts space.
 The less space you occupy, the less you pay for storage.</li>
-<li>Binary size.
-The less program's object file takes, the less you pay for deployment.</li>
+<li>Binary size (executable account space).
+The less program object file takes, the less you pay for deployment.</li>
 <li>Compute units (CU).
 Your goal is to fit in 200k CU per transaction,
 otherwise you have to pay additional fee.</li>
@@ -155,10 +155,10 @@ otherwise you have to pay additional fee.</li>
 <h2 id="calculating-cost"><a class="header" href="#calculating-cost">Calculating cost</a></h2>
 <p>Use <code>solana rent &lt;BYTES&gt;</code> to calculate space price.
 Currently it's about 7.3 SOL per MB.</p>
-<p>Transaction fee is 5000 lamports per signature, which is quite low.</p>
+<p>Transaction fees are just 5000 lamports per signature.</p>
 <h2 id="compiler-options"><a class="header" href="#compiler-options">Compiler options</a></h2>
 <h3 id="lto-link-time-optimization"><a class="header" href="#lto-link-time-optimization">LTO (Link Time Optimization)</a></h3>
-<p>Newer anchor versions will ship these options in project workspace <code>Cargo.toml</code>:</p>
+<p>Newer anchor releases will ship these options in project workspace <code>Cargo.toml</code>:</p>
 <pre><code class="language-toml">[profile.release]
 lto = &quot;fat&quot;
 codegen-units = 1
@@ -171,13 +171,12 @@ codegen-units = 1
 It may improve performance and decrease binary size,
 but comes with increased compilation time.
 It is recommended to use it when deploying.</p>
-<h3 id="opt-levelz"><a class="header" href="#opt-levelz">opt-level=z</a></h3>
+<h3 id="opt-levelsz"><a class="header" href="#opt-levelsz">opt-level={s,z}</a></h3>
 <p>There is another option, <code>opt-level = &quot;z&quot;</code>.
-It may reduce binary size by about 10%, but also degrade performance by about 1.5x.</p>
-<h2 id="vec-vs-slice"><a class="header" href="#vec-vs-slice">Vec vs slice</a></h2>
-<p>TODO</p>
-<h2 id="benchmarking"><a class="header" href="#benchmarking">Benchmarking</a></h2>
-<p>TODO</p>
+It may reduce binary size by about 10%, but also degrade performance by about 50%.
+<code>opt-level = &quot;s&quot;</code> may be half as strong.</p>
+<h2 id="vec-vs-array"><a class="header" href="#vec-vs-array">Vec vs array</a></h2>
+<p>It is generally recommended to use arrays to store in accounts.</p>
 
                     </main>
 
