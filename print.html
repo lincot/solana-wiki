@@ -139,7 +139,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>This is a Solana wiki, containing info and tips on Solana program developement.</p>
+<p>This is a Solana wiki, containing info and tips on Solana program development.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="performance-and-transactionsaccounts-cost"><a class="header" href="#performance-and-transactionsaccounts-cost">Performance and transactions/accounts cost</a></h1>
 <h2 id="metrics"><a class="header" href="#metrics">Metrics</a></h2>
 <p>There are 3 performance metrics of Solana programs:</p>
@@ -177,6 +177,30 @@ It may reduce binary size by about 10%, but also degrade performance by about 50
 <code>opt-level = &quot;s&quot;</code> may be half as strong.</p>
 <h2 id="vec-vs-array"><a class="header" href="#vec-vs-array">Vec vs array</a></h2>
 <p>It is generally recommended to use arrays to store in accounts.</p>
+<h2 id="zero-copy-deserialization"><a class="header" href="#zero-copy-deserialization">Zero copy deserialization</a></h2>
+<p>Using <code>#[account(zero_copy)]</code> and <code>AccountLoader</code>
+instead of <code>#[account]</code> and <code>Account</code>
+makes it so data is not copied to a new struct using borsh
+but instead taken from account's <code>data</code> field directly using casting.</p>
+<p>This is useful when dealing with large accounts to save stack space.</p>
+<p>However, by default <code>zero_copy</code> uses <code>#[repr(C)]</code>, which increases <code>data</code>
+space by itself due to alignment and is likely to break client-side
+deserialization. In essence, it only works when each field has size of
+8*N bytes, for example: </p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[account(zero_copy)]
+struct User {
+    pub authority: Pubkey,
+    pub balance: u64,
+    pub name: [u8; 24],
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>To avoid the <code>#[repr(C)]</code> issues, you can use <code>#[repr(packed)]</code>
+along with <code>zero_copy</code>. However, it may potentially cause UB
+(see <a href="https://github.com/rust-lang/rust/issues/82523">rust-lang#82523</a>).</p>
 
                     </main>
 
