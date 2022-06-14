@@ -64,7 +64,7 @@ space by itself due to alignment and is likely to break client-side
 deserialization. In essence, it only works when each field has size of
 8*N bytes, for example: 
 
-```rust
+```rust,ignore
 #[account(zero_copy)]
 struct User {
     pub authority: Pubkey,
