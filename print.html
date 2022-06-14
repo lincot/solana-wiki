@@ -187,17 +187,13 @@ but instead taken from account's <code>data</code> field directly using casting.
 space by itself due to alignment and is likely to break client-side
 deserialization. In essence, it only works when each field has size of
 8*N bytes, for example: </p>
-<pre><pre class="playground"><code class="language-rust">
-<span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[account(zero_copy)]
+<pre><code class="language-rust ignore">#[account(zero_copy)]
 struct User {
     pub authority: Pubkey,
     pub balance: u64,
     pub name: [u8; 24],
 }
-<span class="boring">}
-</span></code></pre></pre>
+</code></pre>
 <p>To avoid the <code>#[repr(C)]</code> issues, you can use <code>#[repr(packed)]</code>
 along with <code>zero_copy</code>. However, it may potentially cause UB
 (see <a href="https://github.com/rust-lang/rust/issues/82523">rust-lang#82523</a>).</p>
