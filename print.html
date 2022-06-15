@@ -76,7 +76,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction/introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="performance/performance.html"><strong aria-hidden="true">2.</strong> Performance</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction/introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="performance/performance.html"><strong aria-hidden="true">2.</strong> Performance</a></li><li class="chapter-item expanded "><a href="testing/testing.html"><strong aria-hidden="true">3.</strong> Testing</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -197,6 +197,51 @@ struct User {
 <p>To avoid the <code>#[repr(C)]</code> issues, you can use <code>#[repr(packed)]</code>
 along with <code>zero_copy</code>. However, it may potentially cause UB
 (see <a href="https://github.com/rust-lang/rust/issues/82523">rust-lang#82523</a>).</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="testing"><a class="header" href="#testing">Testing</a></h1>
+<h2 id="before-you-dump"><a class="header" href="#before-you-dump">Before you dump</a></h2>
+<p>Add this to <code>Anchor.toml</code> (with needed url):</p>
+<pre><code class="language-toml">[test.validator]
+url = &quot;https://api.devnet.solana.com&quot;
+</code></pre>
+<h2 id="dumping-a-program-to-localnet"><a class="header" href="#dumping-a-program-to-localnet">Dumping a program to localnet</a></h2>
+<p>Add this to <code>Anchor.toml</code>:</p>
+<pre><code class="language-toml">[[test.validator.clone]]
+address = &quot;$PROGRAM_ADDRESS&quot;
+</code></pre>
+<h2 id="dumping-a-mint-to-localnet"><a class="header" href="#dumping-a-mint-to-localnet">Dumping a mint to localnet</a></h2>
+<p>Execute this to download the mint and change its authority to self.</p>
+<pre><code class="language-sh">MINT_ADDRESS=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
+TOKEN_NAME=USDC
+CLUSTER=m
+MINT_AUTHORITY=$(solana address)
+
+mkdir -p tests/accounts
+solana account $MINT_ADDRESS --output json -o tests/accounts/$TOKEN_NAME.json -u $CLUSTER &gt;/dev/null
+
+node -e &quot;
+const bs58 = require('bs58');
+const bs64 = require('base64-js');
+const fs = require('fs');
+const mint = require('./tests/accounts/$TOKEN_NAME.json');
+
+let data = Buffer.from(bs64.toByteArray(mint['account']['data'][0]));
+const authority = bs58.decode('$MINT_AUTHORITY');
+data = Buffer.concat([data.slice(0, 4), authority, data.slice(4 + 32)]);
+mint['account']['data'][0] = bs64.fromByteArray(data);
+
+fs.writeFile('./tests/accounts/$TOKEN_NAME.json', JSON.stringify(mint), 'utf8', (err) =&gt; {
+  if (err) {
+    console.log(\`Error writing file: \${err}\`);
+    process.exit(1);
+  }
+});
+&quot;
+</code></pre>
+<p>Then add this to <code>Anchor.toml</code>:</p>
+<pre><code class="language-toml">[[test.validator.account]]
+address = &quot;$MINT_ADDRESS&quot;
+filename = &quot;tests/accounts/$TOKEN_NAME.json&quot;
+</code></pre>
 
                     </main>
 
