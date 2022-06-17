@@ -77,3 +77,14 @@ To avoid the `#[repr(C)]` issues, you can use `#[repr(packed)]`
 along with `zero_copy`. However, it may potentially cause UB
 (see [rust-lang#82523](https://github.com/rust-lang/rust/issues/82523)).
 
+When using `zero_copy`, there is no need to use a SPACE const like so:
+
+```rust,ignore
+#[account(init, space = 8 + T::SPACE)]
+```
+
+You can just use `size_of`:
+
+```rust,ignore
+#[account(init, space = 8 + std::mem::size_of::<T>())]
+```
