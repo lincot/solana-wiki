@@ -197,6 +197,12 @@ struct User {
 <p>To avoid the <code>#[repr(C)]</code> issues, you can use <code>#[repr(packed)]</code>
 along with <code>zero_copy</code>. However, it may potentially cause UB
 (see <a href="https://github.com/rust-lang/rust/issues/82523">rust-lang#82523</a>).</p>
+<p>When using <code>zero_copy</code>, there is no need to use a SPACE const like so:</p>
+<pre><code class="language-rust ignore">#[account(init, space = 8 + T::SPACE)]
+</code></pre>
+<p>You can just use <code>size_of</code>:</p>
+<pre><code class="language-rust ignore">#[account(init, space = 8 + std::mem::size_of::&lt;T&gt;())]
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="testing"><a class="header" href="#testing">Testing</a></h1>
 <h2 id="before-you-dump"><a class="header" href="#before-you-dump">Before you dump</a></h2>
 <p>Add this to <code>Anchor.toml</code> (with needed url):</p>
