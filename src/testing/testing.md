@@ -9,13 +9,13 @@ Add this to `Anchor.toml` (with needed url):
 url = "https://api.devnet.solana.com"
 ```
 
-## Dumping a program to localnet
+## Dumping an account (e.g. a program) to localnet
 
 Add this to `Anchor.toml`:
 
 ```toml
 [[test.validator.clone]]
-address = "$PROGRAM_ADDRESS"
+address = "$ACCOUNT_ADDRESS"
 ```
 
 ## Dumping a mint to localnet
@@ -37,14 +37,14 @@ const bs64 = require('base64-js');
 const fs = require('fs');
 const mint = require('./tests/accounts/$TOKEN_NAME.json');
 
-let data = Buffer.from(bs64.toByteArray(mint['account']['data'][0]));
+let data = bs64.toByteArray(mint['account']['data'][0]);
 const authority = bs58.decode('$MINT_AUTHORITY');
 data = Buffer.concat([data.slice(0, 4), authority, data.slice(4 + 32)]);
 mint['account']['data'][0] = bs64.fromByteArray(data);
 
-fs.writeFile('./tests/accounts/$TOKEN_NAME.json', JSON.stringify(mint), 'utf8', (err) => {
+fs.writeFile('tests/accounts/$TOKEN_NAME.json', JSON.stringify(mint), 'utf8', (err) => {
   if (err) {
-    console.log(\`Error writing file: \${err}\`);
+    console.log(err);
     process.exit(1);
   }
 });
