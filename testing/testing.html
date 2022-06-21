@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction/introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../performance/performance.html"><strong aria-hidden="true">2.</strong> Performance</a></li><li class="chapter-item expanded "><a href="../testing/testing.html" class="active"><strong aria-hidden="true">3.</strong> Testing</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../resources/resources.html"><strong aria-hidden="true">1.</strong> Useful resources</a></li><li class="chapter-item expanded "><a href="../performance/performance.html"><strong aria-hidden="true">2.</strong> Performance</a></li><li class="chapter-item expanded "><a href="../testing/testing.html" class="active"><strong aria-hidden="true">3.</strong> Testing</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -167,7 +167,7 @@ const bs64 = require('base64-js');
 const fs = require('fs');
 const mint = require('./tests/accounts/$TOKEN_NAME.json');
 
-let data = Buffer.from(bs64.toByteArray(mint['account']['data'][0]));
+let data = bs64.toByteArray(mint['account']['data'][0]);
 const authority = bs58.decode('$MINT_AUTHORITY');
 data = Buffer.concat([data.slice(0, 4), authority, data.slice(4 + 32)]);
 mint['account']['data'][0] = bs64.fromByteArray(data);
