@@ -170,8 +170,9 @@ an account if its owner is <code>system_program</code>.</p>
 fn close(from: &amp;AccountInfo, to: &amp;AccountInfo) -&gt; Result&lt;()&gt; {
     **to.try_borrow_mut_lamports()? += from.lamports();
     **from.try_borrow_mut_lamports()? = 0;
-    from.try_borrow_mut_data()?
-        .copy_from_slice(&amp;CLOSED_ACCOUNT_DISCRIMINATOR);
+    if let Some(discriminator) = from.try_borrow_mut_data()?.get_mut(..8) {
+        discriminator.copy_from_slice(&amp;CLOSED_ACCOUNT_DISCRIMINATOR);
+    }
     Ok(())
 }
 </code></pre>
