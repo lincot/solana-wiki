@@ -39,8 +39,9 @@ use anchor_lang::__private::CLOSED_ACCOUNT_DISCRIMINATOR;
 fn close(from: &AccountInfo, to: &AccountInfo) -> Result<()> {
     **to.try_borrow_mut_lamports()? += from.lamports();
     **from.try_borrow_mut_lamports()? = 0;
-    from.try_borrow_mut_data()?
-        .copy_from_slice(&CLOSED_ACCOUNT_DISCRIMINATOR);
+    if let Some(discriminator) = from.try_borrow_mut_data()?.get_mut(..8) {
+        discriminator.copy_from_slice(&CLOSED_ACCOUNT_DISCRIMINATOR);
+    }
     Ok(())
 }
 ```
