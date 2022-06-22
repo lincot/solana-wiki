@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../resources/resources.html"><strong aria-hidden="true">1.</strong> Useful resources</a></li><li class="chapter-item expanded "><a href="../performance/performance.html"><strong aria-hidden="true">2.</strong> Performance</a></li><li class="chapter-item expanded "><a href="../testing/testing.html" class="active"><strong aria-hidden="true">3.</strong> Testing</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../resources/resources.html"><strong aria-hidden="true">1.</strong> Useful resources</a></li><li class="chapter-item expanded "><a href="../performance/performance.html"><strong aria-hidden="true">2.</strong> Performance</a></li><li class="chapter-item expanded "><a href="../testing/testing.html" class="active"><strong aria-hidden="true">3.</strong> Testing</a></li><li class="chapter-item expanded "><a href="../transfers/transfers.html"><strong aria-hidden="true">4.</strong> Transferring SOL</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -146,10 +146,10 @@
 <pre><code class="language-toml">[test.validator]
 url = &quot;https://api.devnet.solana.com&quot;
 </code></pre>
-<h2 id="dumping-a-program-to-localnet"><a class="header" href="#dumping-a-program-to-localnet">Dumping a program to localnet</a></h2>
+<h2 id="dumping-an-account-eg-a-program-to-localnet"><a class="header" href="#dumping-an-account-eg-a-program-to-localnet">Dumping an account (e.g. a program) to localnet</a></h2>
 <p>Add this to <code>Anchor.toml</code>:</p>
 <pre><code class="language-toml">[[test.validator.clone]]
-address = &quot;$PROGRAM_ADDRESS&quot;
+address = &quot;$ACCOUNT_ADDRESS&quot;
 </code></pre>
 <h2 id="dumping-a-mint-to-localnet"><a class="header" href="#dumping-a-mint-to-localnet">Dumping a mint to localnet</a></h2>
 <p>Execute this to download the mint and change its authority to self.</p>
@@ -172,9 +172,9 @@ const authority = bs58.decode('$MINT_AUTHORITY');
 data = Buffer.concat([data.slice(0, 4), authority, data.slice(4 + 32)]);
 mint['account']['data'][0] = bs64.fromByteArray(data);
 
-fs.writeFile('./tests/accounts/$TOKEN_NAME.json', JSON.stringify(mint), 'utf8', (err) =&gt; {
+fs.writeFile('tests/accounts/$TOKEN_NAME.json', JSON.stringify(mint), 'utf8', (err) =&gt; {
   if (err) {
-    console.log(\`Error writing file: \${err}\`);
+    console.log(err);
     process.exit(1);
   }
 });
@@ -193,6 +193,9 @@ filename = &quot;tests/accounts/$TOKEN_NAME.json&quot;
                             <a rel="prev" href="../performance/performance.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
+                            <a rel="next" href="../transfers/transfers.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         <div style="clear: both"></div>
                     </nav>
                 </div>
@@ -201,6 +204,9 @@ filename = &quot;tests/accounts/$TOKEN_NAME.json&quot;
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                     <a rel="prev" href="../performance/performance.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../transfers/transfers.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
 
