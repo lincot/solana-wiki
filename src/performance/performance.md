@@ -46,6 +46,8 @@ There is another option, `opt-level = "z"`.
 It may reduce binary size by about 10%, but also degrade performance by about 50%.
 `opt-level = "s"` may be half as strong.
 
+Also, this flag may resolve stack size issues.
+
 ## Vec vs array
 
 It is generally recommended to use arrays to store in accounts.

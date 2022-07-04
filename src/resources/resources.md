@@ -13,7 +13,3 @@
 
 - [Anchor book](https://book.anchor-lang.com)
 - [anchor_lang docs](https://docs.rs/anchor-lang/latest/anchor_lang/)
-
-## Metaplex
-
-- [Metaplex docs](https://docs.metaplex.com/)
