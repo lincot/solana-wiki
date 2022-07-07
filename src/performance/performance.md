@@ -21,12 +21,11 @@ Transaction fees are just 5000 lamports per signature.
 
 ## Compiler options
 
-### LTO (Link Time Optimization)
-
-Newer anchor releases will ship these options in project workspace `Cargo.toml`:
+Anchor ships these default options in project workspace `Cargo.toml`:
 
 ```toml
 [profile.release]
+overflow-checks = true
 lto = "fat"
 codegen-units = 1
 [profile.release.build-override]
@@ -35,7 +34,9 @@ incremental = false
 codegen-units = 1
 ```
 
-Out of them, `lto = "fat"`, which is equivalent to `lto = true`, is the main one.
+### LTO (Link Time Optimization)
+
+`lto = "fat"`, which is equivalent to `lto = true`, is quite important.
 It may improve performance and decrease binary size,
 but comes with increased compilation time.
 It is recommended to use it when deploying.
@@ -61,10 +62,9 @@ but instead taken from account's `data` field directly using casting.
 
 This is useful when dealing with large accounts to save stack space.
 
-However, by default `zero_copy` uses `#[repr(C)]`, which increases `data`
-space by itself due to alignment and is likely to break client-side
-deserialization. In essence, it only works when each field has size of
-8*N bytes, for example: 
+By default `zero_copy` uses `#[repr(C)]`, which may increase `data`
+space and break client-side deserialization due to alignment.
+It doesn't happen when each field has size of 8*N bytes, for example: 
 
 ```rust,ignore
 #[account(zero_copy)]
