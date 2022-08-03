@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Performance - Solana Wiki</title>
+        <title>mocha configuration - Solana Wiki</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../resources/resources.html"><strong aria-hidden="true">1.</strong> Useful resources</a></li><li class="chapter-item expanded "><a href="../performance/performance.html" class="active"><strong aria-hidden="true">2.</strong> Performance</a></li><li class="chapter-item expanded "><a href="../testing/testing.html"><strong aria-hidden="true">3.</strong> Testing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../tesing/dumping-accounts.html"><strong aria-hidden="true">3.1.</strong> Dumping accounts</a></li><li class="chapter-item expanded "><a href="../tesing/mocha-configuration.html"><strong aria-hidden="true">3.2.</strong> mocha configuration</a></li></ol></li><li class="chapter-item expanded "><a href="../transfers/transfers.html"><strong aria-hidden="true">4.</strong> Transferring SOL</a></li><li class="chapter-item expanded "><a href="../metaplex/metaplex.html"><strong aria-hidden="true">5.</strong> Metaplex</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../metaplex/candy-machine.html"><strong aria-hidden="true">5.1.</strong> Candy Machine</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../resources/resources.html"><strong aria-hidden="true">1.</strong> Useful resources</a></li><li class="chapter-item expanded "><a href="../performance/performance.html"><strong aria-hidden="true">2.</strong> Performance</a></li><li class="chapter-item expanded "><a href="../testing/testing.html"><strong aria-hidden="true">3.</strong> Testing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../tesing/dumping-accounts.html"><strong aria-hidden="true">3.1.</strong> Dumping accounts</a></li><li class="chapter-item expanded "><a href="../tesing/mocha-configuration.html" class="active"><strong aria-hidden="true">3.2.</strong> mocha configuration</a></li></ol></li><li class="chapter-item expanded "><a href="../transfers/transfers.html"><strong aria-hidden="true">4.</strong> Transferring SOL</a></li><li class="chapter-item expanded "><a href="../metaplex/metaplex.html"><strong aria-hidden="true">5.</strong> Metaplex</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../metaplex/candy-machine.html"><strong aria-hidden="true">5.1.</strong> Candy Machine</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -113,7 +113,7 @@
                         <a href="https://github.com/lincot/solana-wiki" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/lincot/solana-wiki/edit/master/src/performance/performance.md" title="Suggest an edit" aria-label="Suggest an edit">
+                        <a href="https://github.com/lincot/solana-wiki/edit/master/src/tesing/mocha-configuration.md" title="Suggest an edit" aria-label="Suggest an edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
                     </div>
@@ -140,79 +140,21 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="performance-and-transactionsaccounts-cost"><a class="header" href="#performance-and-transactionsaccounts-cost">Performance and transactions/accounts cost</a></h1>
-<h2 id="metrics"><a class="header" href="#metrics">Metrics</a></h2>
-<p>There are 3 performance metrics of Solana programs:</p>
-<ol>
-<li>Accounts space.
-The less space you occupy, the less you pay for storage.</li>
-<li>Binary size (executable account space).
-The less program object file takes, the less you pay for deployment.</li>
-<li>Compute units (CU).
-Your goal is to fit in 200k CU per transaction,
-otherwise you have to pay additional fee.</li>
-</ol>
-<h2 id="calculating-cost"><a class="header" href="#calculating-cost">Calculating cost</a></h2>
-<p>Use <code>solana rent &lt;BYTES&gt;</code> to calculate space price.
-Currently it's about 7.3 SOL per MB.</p>
-<p>Transaction fees are just 5000 lamports per signature.</p>
-<h2 id="compiler-options"><a class="header" href="#compiler-options">Compiler options</a></h2>
-<p>Anchor ships these default options in project workspace <code>Cargo.toml</code>:</p>
-<pre><code class="language-toml">[profile.release]
-overflow-checks = true
-lto = &quot;fat&quot;
-codegen-units = 1
-[profile.release.build-override]
-opt-level = 3
-incremental = false
-codegen-units = 1
-</code></pre>
-<h3 id="lto-link-time-optimization"><a class="header" href="#lto-link-time-optimization">LTO (Link Time Optimization)</a></h3>
-<p><code>lto = &quot;fat&quot;</code>, which is equivalent to <code>lto = true</code>, is quite important.
-It may improve performance and decrease binary size,
-but comes with increased compilation time.
-It is recommended to use it when deploying.</p>
-<h3 id="opt-levelsz"><a class="header" href="#opt-levelsz">opt-level={s,z}</a></h3>
-<p>There is another option, <code>opt-level = &quot;z&quot;</code>.
-It may reduce binary size by about 10%, but also degrade performance by about 50%.
-<code>opt-level = &quot;s&quot;</code> may be half as strong.</p>
-<p>Also, this flag may resolve stack size issues.</p>
-<h2 id="vec-vs-array"><a class="header" href="#vec-vs-array">Vec vs array</a></h2>
-<p>It is generally recommended to use arrays to store in accounts.</p>
-<h2 id="zero-copy-deserialization"><a class="header" href="#zero-copy-deserialization">Zero copy deserialization</a></h2>
-<p>Using <code>#[account(zero_copy)]</code> and <code>AccountLoader</code>
-instead of <code>#[account]</code> and <code>Account</code>
-makes it so data is not copied to a new struct using borsh
-but instead taken from account's <code>data</code> field directly using casting.</p>
-<p>This is useful when dealing with large accounts to save stack space.</p>
-<p>By default <code>zero_copy</code> uses <code>#[repr(C)]</code>, which may increase <code>data</code>
-space and break client-side deserialization due to alignment.
-It doesn't happen when each field has size of 8*N bytes, for example: </p>
-<pre><code class="language-rust ignore">#[account(zero_copy)]
-struct User {
-    pub authority: Pubkey,
-    pub balance: u64,
-    pub name: [u8; 24],
-}
-</code></pre>
-<p>To avoid the <code>#[repr(C)]</code> issues, you can use <code>#[repr(packed)]</code>
-along with <code>zero_copy</code>. However, it may potentially cause UB
-(see <a href="https://github.com/rust-lang/rust/issues/82523">rust-lang#82523</a>).</p>
-<p>When using <code>zero_copy</code>, there is no need to use a LEN const like so:</p>
-<pre><code class="language-rust ignore">#[account(init, space = 8 + T::LEN)]
-</code></pre>
-<p>You can just use <code>size_of</code>:</p>
-<pre><code class="language-rust ignore">#[account(init, space = 8 + std::mem::size_of::&lt;T&gt;())]
+                        <h1 id="mocha-configuration"><a class="header" href="#mocha-configuration">mocha configuration</a></h1>
+<p>To disable test timeouts and show elapsed time of fast tests,
+add this to <code>Anchor.toml</code>:</p>
+<pre><code class="language-toml">[scripts]
+test = &quot;yarn run ts-mocha -p ./tsconfig.json --no-timeouts -s 0 tests/**/*.ts&quot;
 </code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../resources/resources.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../tesing/dumping-accounts.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="../testing/testing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../transfers/transfers.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -221,10 +163,10 @@ along with <code>zero_copy</code>. However, it may potentially cause UB
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../resources/resources.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../tesing/dumping-accounts.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="../testing/testing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../transfers/transfers.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
