@@ -1,4 +1,4 @@
-# Dumping accounts
+# Dumping accounts on localnet
 
 ## Before you dump
 

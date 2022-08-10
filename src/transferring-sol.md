@@ -49,7 +49,7 @@ fn close(from: &AccountInfo, to: &AccountInfo) -> Result<()> {
 ## From an account owned by system_program such as a wallet
 
 ```rust,ignore
-use anchor_lang::solana_program::{program::invoke, system_instruction};
+use solana_program::{program::invoke, system_instruction};
 
 fn transfer<'info>(
     from: &AccountInfo<'info>,
