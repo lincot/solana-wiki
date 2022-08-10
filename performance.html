@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Solana Wiki</title>
-        <meta name="robots" content="noindex" />
+        <title>Performance - Solana Wiki</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -76,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="useful-resources.html"><strong aria-hidden="true">1.</strong> Useful resources</a></li><li class="chapter-item expanded "><a href="performance.html"><strong aria-hidden="true">2.</strong> Performance</a></li><li class="chapter-item expanded "><a href="testing/testing.html"><strong aria-hidden="true">3.</strong> Testing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="testing/mocha-configuration.html"><strong aria-hidden="true">3.1.</strong> Mocha configuration</a></li><li class="chapter-item expanded "><a href="testing/getting-sol-on-devnet.html"><strong aria-hidden="true">3.2.</strong> Getting SOL on devnet</a></li><li class="chapter-item expanded "><a href="testing/dumping-accounts-on-localnet.html"><strong aria-hidden="true">3.3.</strong> Dumping accounts on localnet</a></li></ol></li><li class="chapter-item expanded "><a href="transferring-sol.html"><strong aria-hidden="true">4.</strong> Transferring SOL</a></li><li class="chapter-item expanded "><a href="metaplex/metaplex.html"><strong aria-hidden="true">5.</strong> Metaplex</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="metaplex/candy-machine.html"><strong aria-hidden="true">5.1.</strong> Candy Machine</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="useful-resources.html"><strong aria-hidden="true">1.</strong> Useful resources</a></li><li class="chapter-item expanded "><a href="performance.html" class="active"><strong aria-hidden="true">2.</strong> Performance</a></li><li class="chapter-item expanded "><a href="testing/testing.html"><strong aria-hidden="true">3.</strong> Testing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="testing/mocha-configuration.html"><strong aria-hidden="true">3.1.</strong> Mocha configuration</a></li><li class="chapter-item expanded "><a href="testing/getting-sol-on-devnet.html"><strong aria-hidden="true">3.2.</strong> Getting SOL on devnet</a></li><li class="chapter-item expanded "><a href="testing/dumping-accounts-on-localnet.html"><strong aria-hidden="true">3.3.</strong> Dumping accounts on localnet</a></li></ol></li><li class="chapter-item expanded "><a href="transferring-sol.html"><strong aria-hidden="true">4.</strong> Transferring SOL</a></li><li class="chapter-item expanded "><a href="metaplex/metaplex.html"><strong aria-hidden="true">5.</strong> Metaplex</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="metaplex/candy-machine.html"><strong aria-hidden="true">5.1.</strong> Candy Machine</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -114,6 +113,9 @@
                         <a href="https://github.com/lincot/solana-wiki" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
+                        <a href="https://github.com/lincot/solana-wiki/edit/master/src/performance.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
                     </div>
                 </div>
 
@@ -138,22 +140,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="useful-resources"><a class="header" href="#useful-resources">Useful resources</a></h1>
-<h2 id="rust"><a class="header" href="#rust">Rust</a></h2>
-<ul>
-<li><a href="https://doc.rust-lang.org/stable/book/">Rust book</a></li>
-</ul>
-<h2 id="solana"><a class="header" href="#solana">Solana</a></h2>
-<ul>
-<li><a href="https://docs.solana.com/introduction">Solana docs</a></li>
-<li><a href="https://solanacookbook.com">Solana Cookbook</a></li>
-</ul>
-<h2 id="anchor"><a class="header" href="#anchor">Anchor</a></h2>
-<ul>
-<li><a href="https://book.anchor-lang.com">Anchor book</a></li>
-<li><a href="https://docs.rs/anchor-lang/latest/anchor_lang/">anchor_lang docs</a></li>
-</ul>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="performance-and-transactionsaccounts-cost"><a class="header" href="#performance-and-transactionsaccounts-cost">Performance and transactions/accounts cost</a></h1>
+                        <h1 id="performance-and-transactionsaccounts-cost"><a class="header" href="#performance-and-transactionsaccounts-cost">Performance and transactions/accounts cost</a></h1>
 <h2 id="metrics"><a class="header" href="#metrics">Metrics</a></h2>
 <p>There are 3 performance metrics of Solana programs:</p>
 <ol>
@@ -217,162 +204,29 @@ along with <code>zero_copy</code>. However, it may potentially cause UB
 <p>You can just use <code>size_of</code>:</p>
 <pre><code class="language-rust ignore">#[account(init, space = 8 + std::mem::size_of::&lt;T&gt;())]
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="testing"><a class="header" href="#testing">Testing</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="mocha-configuration"><a class="header" href="#mocha-configuration">Mocha configuration</a></h1>
-<p>You can use this configuration in <code>Anchor.toml</code>:</p>
-<pre><code class="language-toml">[scripts]
-test = &quot;yarn ts-mocha -p ./tsconfig.json --no-timeouts --slow 0 --exit tests/**/*.ts&quot;
-</code></pre>
-<ul>
-<li><code>--no-timeouts</code> to disable test timeouts</li>
-<li><code>--slow 0</code> to show elapsed time for all tests, even slow ones</li>
-<li><code>--exit</code> to force exit after tests to avoid process hanging</li>
-</ul>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="getting-sol-on-devnet"><a class="header" href="#getting-sol-on-devnet">Getting SOL on devnet</a></h1>
-<p>You can request a devnet airdrop on <a href="https://solfaucet.com/">Sol Faucet</a>.
-After testing, you can close program accounts to reclaim SOL:</p>
-<pre><code>solana program close -ud [ACCOUNT_ADDRESS]
-</code></pre>
-<p>To get the list of your programs to be closed:</p>
-<pre><code>solana program show -ud --programs
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="dumping-accounts-on-localnet"><a class="header" href="#dumping-accounts-on-localnet">Dumping accounts on localnet</a></h1>
-<h2 id="before-you-dump"><a class="header" href="#before-you-dump">Before you dump</a></h2>
-<p>Add this to <code>Anchor.toml</code> (with needed url):</p>
-<pre><code class="language-toml">[test.validator]
-url = &quot;https://api.devnet.solana.com&quot;
-</code></pre>
-<h2 id="dumping-an-account-eg-a-program-to-localnet"><a class="header" href="#dumping-an-account-eg-a-program-to-localnet">Dumping an account (e.g. a program) to localnet</a></h2>
-<p>Add this to <code>Anchor.toml</code>:</p>
-<pre><code class="language-toml">[[test.validator.clone]]
-address = &quot;$ACCOUNT_ADDRESS&quot;
-</code></pre>
-<h2 id="dumping-a-mint-eg-usdc-to-localnet"><a class="header" href="#dumping-a-mint-eg-usdc-to-localnet">Dumping a mint (e.g. USDC) to localnet</a></h2>
-<p><code>scripts/dump.ts</code>:</p>
-<pre><code class="language-ts">import * as anchor from &quot;@project-serum/anchor&quot;;
-import * as bs58 from &quot;bs58&quot;;
-import * as bs64 from &quot;base64-js&quot;;
-import { writeFile } from &quot;fs&quot;;
-import { execSync } from &quot;child_process&quot;;
-import NodeWallet from &quot;@project-serum/anchor/dist/cjs/nodewallet&quot;;
-
-const provider = anchor.AnchorProvider.env();
-anchor.setProvider(provider);
-const wallet = (provider.wallet as NodeWallet).payer;
-
-function dumpMint(
-  mintAddress: string,
-  tokenName: string,
-  mintAuthority: string
-) {
-  const mintPath = `tests/accounts/${tokenName}.json`;
-  execSync(
-    `mkdir -p tests/accounts &amp;&amp; solana account ${mintAddress} --output json -o ${mintPath} -um &gt;/dev/null`
-  );
-  const mint = require(`../${mintPath}`);
-
-  let data = bs64.toByteArray(mint[&quot;account&quot;][&quot;data&quot;][0]);
-  const authority = bs58.decode(mintAuthority);
-  data = Buffer.concat([data.slice(0, 4), authority, data.slice(4 + 32)]);
-  mint[&quot;account&quot;][&quot;data&quot;][0] = bs64.fromByteArray(data);
-
-  writeFile(mintPath, JSON.stringify(mint), &quot;utf8&quot;, (err: any) =&gt; {
-    if (err) {
-      console.log(err);
-      process.exit(1);
-    }
-  });
-}
-
-dumpMint(
-  &quot;EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&quot;,
-  &quot;USDC&quot;,
-  wallet.publicKey.toString()
-);
-</code></pre>
-<p><code>Anchor.toml</code>:</p>
-<pre><code class="language-toml">[[test.validator.account]]
-address = &quot;EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&quot;
-filename = &quot;tests/accounts/USDC.json&quot;
-</code></pre>
-<pre><code class="language-toml">[scripts]
-dump = &quot;yarn run ts-node scripts/dump.ts&quot;
-</code></pre>
-<p>Also add <code>tests/accounts/</code> to <code>.gitignore</code>.</p>
-<p>Run <code>anchor run dump</code> before testing.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="transferring-sol"><a class="header" href="#transferring-sol">Transferring SOL</a></h1>
-<h2 id="from-an-account-owned-by-your-program-such-as-a-pda"><a class="header" href="#from-an-account-owned-by-your-program-such-as-a-pda">From an account owned by your program such as a PDA</a></h2>
-<p>You can't use CPI, because all programs can only spend balances of
-accounts they own. So <code>system_program</code>'s <code>Transfer</code> can only spend balance of
-an account if its owner is <code>system_program</code>.</p>
-<h3 id="an-amount"><a class="header" href="#an-amount">An amount</a></h3>
-<pre><code class="language-rust ignore">fn transfer(from: &amp;AccountInfo, to: &amp;AccountInfo, lamports: u64) -&gt; Result&lt;()&gt; {
-    **from.try_borrow_mut_lamports()? = (from.lamports())
-        .checked_sub(lamports)
-        .ok_or(ProgramError::InsufficientFunds)?;
-    **to.try_borrow_mut_lamports()? += lamports;
-    Ok(())
-}
-</code></pre>
-<h3 id="all-but-rent"><a class="header" href="#all-but-rent">All but rent</a></h3>
-<pre><code class="language-rust ignore">fn transfer_all_but_rent(from: &amp;AccountInfo, to: &amp;AccountInfo) -&gt; Result&lt;()&gt; {
-    let rent = Rent::get()?.minimum_balance(from.data_len());
-    **to.try_borrow_mut_lamports()? += (from.lamports())
-        .checked_sub(rent)
-        .ok_or(ProgramError::InsufficientFunds)?;
-    **from.try_borrow_mut_lamports()? = rent;
-    Ok(())
-}
-</code></pre>
-<h3 id="all"><a class="header" href="#all">All</a></h3>
-<pre><code class="language-rust ignore">use anchor_lang::__private::CLOSED_ACCOUNT_DISCRIMINATOR;
-
-fn close(from: &amp;AccountInfo, to: &amp;AccountInfo) -&gt; Result&lt;()&gt; {
-    **to.try_borrow_mut_lamports()? += from.lamports();
-    **from.try_borrow_mut_lamports()? = 0;
-    if let Some(discriminator) = from.try_borrow_mut_data()?.get_mut(..8) {
-        discriminator.copy_from_slice(&amp;CLOSED_ACCOUNT_DISCRIMINATOR);
-    }
-    Ok(())
-}
-</code></pre>
-<h2 id="from-an-account-owned-by-system_program-such-as-a-wallet"><a class="header" href="#from-an-account-owned-by-system_program-such-as-a-wallet">From an account owned by system_program such as a wallet</a></h2>
-<pre><code class="language-rust ignore">use solana_program::{program::invoke, system_instruction};
-
-fn transfer&lt;'info&gt;(
-    from: &amp;AccountInfo&lt;'info&gt;,
-    to: &amp;AccountInfo&lt;'info&gt;,
-    lamports: u64,
-) -&gt; Result&lt;()&gt; {
-    invoke(
-        &amp;system_instruction::transfer(&amp;from.key(), &amp;to.key(), lamports),
-        &amp;[from.to_account_info(), to.to_account_info()],
-    )?;
-    Ok(())
-}
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="metaplex"><a class="header" href="#metaplex">Metaplex</a></h1>
-<ul>
-<li><a href="https://docs.metaplex.com/">Metaplex docs</a></li>
-</ul>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="candy-machine"><a class="header" href="#candy-machine">Candy Machine</a></h1>
-<p>Candy Machine's mint instruction is impossible to use in other programs, since
-it is not allowed to invoke it using CPI or to have &quot;suspicious&quot; instructions
-in the same transaction.</p>
-<p>Also, it will &quot;punish&quot; you for 0.01 SOL when doing anything wrong,
-e.g. trying to mint when there's no NFT left or before the start date.
-The instruction won't fail, of course.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="useful-resources.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="testing/testing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="useful-resources.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="testing/testing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
@@ -388,10 +242,5 @@ The instruction won't fail, of course.</p>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
-        <script type="text/javascript">
-        window.addEventListener('load', function() {
-            window.setTimeout(window.print, 100);
-        });
-        </script>
     </body>
 </html>

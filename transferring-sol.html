@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Page not found - Solana Wiki</title>
-        <base href="/">
+        <title>Transferring SOL - Solana Wiki</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -76,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="useful-resources.html"><strong aria-hidden="true">1.</strong> Useful resources</a></li><li class="chapter-item expanded "><a href="performance.html"><strong aria-hidden="true">2.</strong> Performance</a></li><li class="chapter-item expanded "><a href="testing/testing.html"><strong aria-hidden="true">3.</strong> Testing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="testing/mocha-configuration.html"><strong aria-hidden="true">3.1.</strong> Mocha configuration</a></li><li class="chapter-item expanded "><a href="testing/getting-sol-on-devnet.html"><strong aria-hidden="true">3.2.</strong> Getting SOL on devnet</a></li><li class="chapter-item expanded "><a href="testing/dumping-accounts-on-localnet.html"><strong aria-hidden="true">3.3.</strong> Dumping accounts on localnet</a></li></ol></li><li class="chapter-item expanded "><a href="transferring-sol.html"><strong aria-hidden="true">4.</strong> Transferring SOL</a></li><li class="chapter-item expanded "><a href="metaplex/metaplex.html"><strong aria-hidden="true">5.</strong> Metaplex</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="metaplex/candy-machine.html"><strong aria-hidden="true">5.1.</strong> Candy Machine</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="useful-resources.html"><strong aria-hidden="true">1.</strong> Useful resources</a></li><li class="chapter-item expanded "><a href="performance.html"><strong aria-hidden="true">2.</strong> Performance</a></li><li class="chapter-item expanded "><a href="testing/testing.html"><strong aria-hidden="true">3.</strong> Testing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="testing/mocha-configuration.html"><strong aria-hidden="true">3.1.</strong> Mocha configuration</a></li><li class="chapter-item expanded "><a href="testing/getting-sol-on-devnet.html"><strong aria-hidden="true">3.2.</strong> Getting SOL on devnet</a></li><li class="chapter-item expanded "><a href="testing/dumping-accounts-on-localnet.html"><strong aria-hidden="true">3.3.</strong> Dumping accounts on localnet</a></li></ol></li><li class="chapter-item expanded "><a href="transferring-sol.html" class="active"><strong aria-hidden="true">4.</strong> Transferring SOL</a></li><li class="chapter-item expanded "><a href="metaplex/metaplex.html"><strong aria-hidden="true">5.</strong> Metaplex</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="metaplex/candy-machine.html"><strong aria-hidden="true">5.1.</strong> Candy Machine</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -114,6 +113,9 @@
                         <a href="https://github.com/lincot/solana-wiki" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
+                        <a href="https://github.com/lincot/solana-wiki/edit/master/src/transferring-sol.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
                     </div>
                 </div>
 
@@ -138,19 +140,80 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="document-not-found-404"><a class="header" href="#document-not-found-404">Document not found (404)</a></h1>
-<p>This URL is invalid, sorry. Please use the navigation bar or search to continue.</p>
+                        <h1 id="transferring-sol"><a class="header" href="#transferring-sol">Transferring SOL</a></h1>
+<h2 id="from-an-account-owned-by-your-program-such-as-a-pda"><a class="header" href="#from-an-account-owned-by-your-program-such-as-a-pda">From an account owned by your program such as a PDA</a></h2>
+<p>You can't use CPI, because all programs can only spend balances of
+accounts they own. So <code>system_program</code>'s <code>Transfer</code> can only spend balance of
+an account if its owner is <code>system_program</code>.</p>
+<h3 id="an-amount"><a class="header" href="#an-amount">An amount</a></h3>
+<pre><code class="language-rust ignore">fn transfer(from: &amp;AccountInfo, to: &amp;AccountInfo, lamports: u64) -&gt; Result&lt;()&gt; {
+    **from.try_borrow_mut_lamports()? = (from.lamports())
+        .checked_sub(lamports)
+        .ok_or(ProgramError::InsufficientFunds)?;
+    **to.try_borrow_mut_lamports()? += lamports;
+    Ok(())
+}
+</code></pre>
+<h3 id="all-but-rent"><a class="header" href="#all-but-rent">All but rent</a></h3>
+<pre><code class="language-rust ignore">fn transfer_all_but_rent(from: &amp;AccountInfo, to: &amp;AccountInfo) -&gt; Result&lt;()&gt; {
+    let rent = Rent::get()?.minimum_balance(from.data_len());
+    **to.try_borrow_mut_lamports()? += (from.lamports())
+        .checked_sub(rent)
+        .ok_or(ProgramError::InsufficientFunds)?;
+    **from.try_borrow_mut_lamports()? = rent;
+    Ok(())
+}
+</code></pre>
+<h3 id="all"><a class="header" href="#all">All</a></h3>
+<pre><code class="language-rust ignore">use anchor_lang::__private::CLOSED_ACCOUNT_DISCRIMINATOR;
+
+fn close(from: &amp;AccountInfo, to: &amp;AccountInfo) -&gt; Result&lt;()&gt; {
+    **to.try_borrow_mut_lamports()? += from.lamports();
+    **from.try_borrow_mut_lamports()? = 0;
+    if let Some(discriminator) = from.try_borrow_mut_data()?.get_mut(..8) {
+        discriminator.copy_from_slice(&amp;CLOSED_ACCOUNT_DISCRIMINATOR);
+    }
+    Ok(())
+}
+</code></pre>
+<h2 id="from-an-account-owned-by-system_program-such-as-a-wallet"><a class="header" href="#from-an-account-owned-by-system_program-such-as-a-wallet">From an account owned by system_program such as a wallet</a></h2>
+<pre><code class="language-rust ignore">use solana_program::{program::invoke, system_instruction};
+
+fn transfer&lt;'info&gt;(
+    from: &amp;AccountInfo&lt;'info&gt;,
+    to: &amp;AccountInfo&lt;'info&gt;,
+    lamports: u64,
+) -&gt; Result&lt;()&gt; {
+    invoke(
+        &amp;system_instruction::transfer(&amp;from.key(), &amp;to.key(), lamports),
+        &amp;[from.to_account_info(), to.to_account_info()],
+    )?;
+    Ok(())
+}
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="testing/dumping-accounts-on-localnet.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="metaplex/metaplex.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="testing/dumping-accounts-on-localnet.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="metaplex/metaplex.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
